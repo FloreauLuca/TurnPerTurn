@@ -2,79 +2,108 @@
 using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
-    string gameVersion = "1";
+    public TMP_InputField InputField;
+    public string UserId;
 
-    [Tooltip("The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created")]
-    [SerializeField]
-    private byte maxPlayersPerRoom = 4;
+    string previousRoomPlayerPrefKey = "PreviousRoom";
+    public string previousRoom;
 
-    [Tooltip("The Ui Panel to let the user enter name, connect and play")]
-    [SerializeField]
-    private GameObject controlPanel;
-    [Tooltip("The UI Label to inform the user that the connection is in progress")]
-    [SerializeField]
-    private GameObject progressLabel;
+    private const string MainSceneName = "LucaScene";
 
-    bool isConnecting;
+    const string NickNamePlayerPrefsKey = "NickName";
 
-    void Awake()
-    {
-        // #Critical
-        // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
-        PhotonNetwork.AutomaticallySyncScene = true;
-    }
+    private string gameVersion = "1.0";
 
     void Start()
     {
-        progressLabel.SetActive(false);
-        controlPanel.SetActive(true);
+        InputField.text = PlayerPrefs.HasKey(NickNamePlayerPrefsKey) ? PlayerPrefs.GetString(NickNamePlayerPrefsKey) : "";
     }
 
-    public void Connect()
+    public void ApplyUserIdAndConnect()
     {
-        isConnecting = true;
-        progressLabel.SetActive(true);
-        controlPanel.SetActive(false);
-        if (PhotonNetwork.IsConnected)
+        string nickName = "DemoNick";
+        if (this.InputField != null && !string.IsNullOrEmpty(this.InputField.text))
         {
-            PhotonNetwork.JoinRandomRoom();
+            nickName = this.InputField.text;
+            PlayerPrefs.SetString(NickNamePlayerPrefsKey, nickName);
         }
-        else
+
+        if (PhotonNetwork.AuthValues == null)
         {
-            PhotonNetwork.GameVersion = gameVersion;
-            PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.AuthValues = new AuthenticationValues();
         }
+
+        PhotonNetwork.AuthValues.UserId = nickName;
+
+        Debug.Log("Nickname: " + nickName + " userID: " + this.UserId, this);
+
+        PhotonNetwork.LocalPlayer.NickName = nickName;
+        PhotonNetwork.GameVersion = gameVersion;
+        PhotonNetwork.ConnectUsingSettings();
+
     }
+
 
     public override void OnConnectedToMaster()
     {
-        if (isConnecting)
+        this.UserId = PhotonNetwork.LocalPlayer.UserId;
+        Debug.Log("UserID " + this.UserId);
+
+        if (PlayerPrefs.HasKey(previousRoomPlayerPrefKey))
         {
-            // #Critical: The first we try to do is to join a potential existing room. If there is, good, else, we'll be called back with OnJoinRandomFailed()
+            Debug.Log("getting previous room from prefs: ");
+            this.previousRoom = PlayerPrefs.GetString(previousRoomPlayerPrefKey);
+            PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey); // we don't keep this, it was only for initial recovery
+        }
+
+        if (!string.IsNullOrEmpty(this.previousRoom))
+        {
+            Debug.Log("ReJoining previous room: " + this.previousRoom);
+            PhotonNetwork.JoinRoom(this.previousRoom);
+            this.previousRoom = null; // we only will try to re-join once. if this fails, we will get into a random/new room
+        }
+        else
+        {
+            // else: join a random room
             PhotonNetwork.JoinRandomRoom();
         }
+    }
+    public override void OnJoinedLobby()
+    {
+        OnConnectedToMaster(); // this way, it does not matter if we join a lobby or not
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
-
-        // #Critical: we failed to join a random room, maybe none exists or they are all full. No worries, we create a new room.
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
-    }
-
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        progressLabel.SetActive(false);
-        controlPanel.SetActive(true);
+        Debug.Log("OnPhotonRandomJoinFailed");
+        PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 2, PlayerTtl = 20000 }, null);
     }
 
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LoadLevel("LucaScene");
+        Debug.Log("Joined room: " + PhotonNetwork.CurrentRoom.Name);
+        this.previousRoom = PhotonNetwork.CurrentRoom.Name;
+        PlayerPrefs.SetString(previousRoomPlayerPrefKey, this.previousRoom);
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("OnPhotonJoinRoomFailed");
+        this.previousRoom = null;
+        PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey);
+    }
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
+    }
+
+    public override void OnPlayerEnteredRoom(Player otherPlayer)
+    {
+        Debug.Log("OnPhotonPlayerActivityChanged() for " + otherPlayer.NickName + " IsInactive: " + otherPlayer.IsInactive);
     }
 }
