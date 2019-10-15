@@ -27,11 +27,17 @@ public class Action
     public Pokemon switchedPokemon = null;
 }
 
-public class Pokemon
+[CreateAssetMenu]
+public class Pokemon:ScriptableObject
 {
     public Action[] listActions = new Action[3];
-    public float pv;
+    public float currentpv;
+    public float maxpv;
     public float speed;
+    public string name;
+    public string type;
+    public bool freezed;
+    public bool poisonned;
 }
 
 public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
@@ -42,10 +48,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     [SerializeField] private GameObject localPlayerPanel;
     [SerializeField] private TextMeshProUGUI localPlayerName;
     [SerializeField] private TextMeshProUGUI localPlayerAction;
+    [SerializeField] private UIPanel localPlayerUI;
 
     [SerializeField] private GameObject remotePlayerPanel;
     [SerializeField] private TextMeshProUGUI remotePlayerName;
     [SerializeField] private TextMeshProUGUI remotePlayerAction;
+    [SerializeField] private UIPanel remotePlayerUI;
 
     [SerializeField] private GameObject interfacePanel;
 
@@ -197,6 +205,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         localPlayerAction.gameObject.SetActive(false);
         remotePlayerAction.gameObject.SetActive(true);
 
+        remotePlayerPanel.SetActive(true);
+        localPlayerPanel.SetActive(true);
+
         isShowingResults = false;
         interfacePanel.SetActive(true);
     }
@@ -268,10 +279,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         switch (selection.type)
         {
             case Action.Type.ATTAQUE:
-                otherPokemon.pv -= selection.value;
+                otherPokemon.currentpv -= selection.value;
                 break;
             case Action.Type.SOIN:
-                myPokemon.pv += selection.value;
+                myPokemon.currentpv += selection.value;
                 break;
             case Action.Type.DEF:
                 break;
@@ -284,7 +295,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     private void UpdateScores()
     {
-        
+        localPlayerUI.SetValue(localPokemon.name, localPokemon.maxpv, localPokemon.currentpv, localPokemon.type, localPokemon.freezed, localPokemon.poisonned);
+        remotePlayerUI.SetValue(remotePokemon.name, remotePokemon.maxpv, remotePokemon.currentpv, remotePokemon.type, remotePokemon.freezed, remotePokemon.poisonned);
     }
 
     public void OnEndTurn()
@@ -296,7 +308,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     {
         interfacePanel.SetActive(false);
         isShowingResults = true;
-        //TODO damage
+        //TODO afficher action
 
         yield return new WaitForSeconds(2.0f);
 
