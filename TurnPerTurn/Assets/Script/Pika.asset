@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5c82a82cfa2c7b94897458879ec3a765, type: 3}
   m_Name: Pika
-  m_EditorClassIdentifier: Assembly-CSharp::Pokemon
+  m_EditorClassIdentifier: 
   listActions:
   - type: 0
     value: 25
@@ -20,12 +20,12 @@ MonoBehaviour:
     value: 0
     switchedPokemon: {fileID: 0}
   - type: 1
-    value: 15
+    value: 10
     switchedPokemon: {fileID: 0}
   currentpv: 100
   maxpv: 100
   speed: 50
   name: pika
-  type: elec
+  type: 
   freezed: 0
   poisonned: 0

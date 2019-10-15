@@ -11,8 +11,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     public TMP_InputField InputField;
     public string UserId;
 
-    string previousRoomPlayerPrefKey = "PreviousRoom";
-    public string previousRoom;
+    //string previousRoomPlayerPrefKey = "PreviousRoom";
+    //public string previousRoom;
 
     private const string MainSceneName = "LucaScene";
 
@@ -41,7 +41,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
         PhotonNetwork.AuthValues.UserId = nickName;
 
-        Debug.Log("Nickname: " + nickName + " userID: " + this.UserId, this);
+        Debug.Log("Nickname: " + nickName + " userID: " + this.UserId + " , " + PhotonNetwork.LocalPlayer.ActorNumber, this);
 
         PhotonNetwork.LocalPlayer.NickName = nickName;
         PhotonNetwork.GameVersion = gameVersion;
@@ -55,6 +55,8 @@ public class Launcher : MonoBehaviourPunCallbacks
         this.UserId = PhotonNetwork.LocalPlayer.UserId;
         Debug.Log("UserID " + this.UserId);
 
+        PhotonNetwork.JoinRandomRoom();
+        /*
         if (PlayerPrefs.HasKey(previousRoomPlayerPrefKey))
         {
             Debug.Log("getting previous room from prefs: ");
@@ -73,6 +75,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             // else: join a random room
             PhotonNetwork.JoinRandomRoom();
         }
+        */
     }
     public override void OnJoinedLobby()
     {
@@ -88,18 +91,18 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room: " + PhotonNetwork.CurrentRoom.Name);
-        this.previousRoom = PhotonNetwork.CurrentRoom.Name;
-        PlayerPrefs.SetString(previousRoomPlayerPrefKey, this.previousRoom);
+        //this.previousRoom = PhotonNetwork.CurrentRoom.Name;
+        //PlayerPrefs.SetString(previousRoomPlayerPrefKey, this.previousRoom);
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Debug.Log("OnPhotonJoinRoomFailed");
-        this.previousRoom = null;
-        PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey);
+        //this.previousRoom = null;
+        //PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey);
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
-        Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
+        //Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
     }
 
     public override void OnPlayerEnteredRoom(Player otherPlayer)

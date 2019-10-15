@@ -42,7 +42,7 @@ public class RpsDemoConnect : PunBehaviour
 		Debug.Log("Nickname: " + nickName + " userID: " + this.UserId,this);
 		
         PhotonNetwork.playerName = nickName;
-        PhotonNetwork.ConnectUsingSettings("0.1");
+        PhotonNetwork.ConnectUsingSettings("0.5");
         
         // this way we can force timeouts by pausing the client (in editor)
         PhotonHandler.StopFallbackSendAckThread();
@@ -53,7 +53,7 @@ public class RpsDemoConnect : PunBehaviour
     {
         // after connect 
         this.UserId = PhotonNetwork.player.UserId;
-        Debug.Log("UserID " + this.UserId);
+        Debug.Log("UserID " + this.UserId + " , " + PhotonNetwork.player.ID);
 
 		if (PlayerPrefs.HasKey(previousRoomPlayerPrefKey))
 		{
@@ -101,6 +101,7 @@ public class RpsDemoConnect : PunBehaviour
 		Debug.Log("OnPhotonJoinRoomFailed");
         this.previousRoom = null;
 		PlayerPrefs.DeleteKey(previousRoomPlayerPrefKey);
+        OnConnectedToMaster();
     }
 
     public override void OnConnectionFail(DisconnectCause cause)

@@ -277,11 +277,11 @@ public class RpsCore : PunBehaviour, IPunTurnManagerCallbacks
 
         if (photonPlayer.IsLocal)
         {
-            this.localSelection = (Hand)(byte)move;
+            this.localSelection = (Hand)move;
         }
         else
         {
-            this.remoteSelection = (Hand)(byte)move;
+            this.remoteSelection = (Hand)move;
         }
     }
 
@@ -320,7 +320,7 @@ public class RpsCore : PunBehaviour, IPunTurnManagerCallbacks
 	
     public void MakeTurn(Hand selection)
     {
-        this.turnManager.SendMove((byte)selection, true);
+        this.turnManager.SendMove(selection, true);
     }
 	
     public void OnEndTurn()
