@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: feb7125854f6ac047989e86aceda15e0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - actualPkmn: {fileID: 11400000, guid: b6be01ab1b8a2434e9a7523f9cd49527, type: 2}
+  - opponentPkmn: {fileID: 11400000, guid: 75fc6149a240c4f4b9ce3f21f8cf3adb, type: 2}
+  - actualAbility: {fileID: 11400000, guid: b4a544414395c7a4689eaa4623a7d14a, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

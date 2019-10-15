@@ -8,6 +8,6 @@ public enum Status { HEAL, DAMAGE, BOOST };
 public class abilityScriptObj : ScriptableObject
 {
     public string abilityName;
-    public string type;
+    public Type type;
     public Status status;
 }
