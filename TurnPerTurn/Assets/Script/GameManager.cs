@@ -16,7 +16,7 @@ using Object = System.Object;
 [Serializable]
 public class PokemonObject
 {
-    public Action[] listActions = new Action[3];
+    //public Action[] listActions = new Action[3];
     public float currentpv;
     public float maxpv;
     public float speed;
@@ -25,21 +25,6 @@ public class PokemonObject
     public bool freezed;
     public bool poisonned;
 
-
-    public byte Id { get; set; }
-
-    public static object Deserialize(byte[] data)
-    {
-        var result = new PokemonObject();
-        result.Id = data[0];
-        return result;
-    }
-
-    public static byte[] Serialize(object customType)
-    {
-        var c = (PokemonObject)customType;
-        return new byte[] { c.Id };
-    }
 }
 
 public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
@@ -60,6 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     [SerializeField] private GameObject interfacePanel;
 
     [SerializeField] private Pokemon localPokemonScriptable;
+    [SerializeField] private Pokemon[] pokemonScriptable;
 
     private PokemonObject localPokemon;
     private PokemonObject remotePokemon;
@@ -81,15 +67,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     public void Start()
     {
         localPokemon = new PokemonObject();
-        remotePokemon = new PokemonObject();
-        PhotonPeer.RegisterType(typeof(Action), 3+5+2, Action.Serialize, Action.Deserialize);
-        PhotonPeer.RegisterType(typeof(PokemonObject), 3+3+3+5+2+5+5+5+3+3+2+2, PokemonObject.Serialize, PokemonObject.Deserialize);
+        PhotonPeer.RegisterType(typeof(Action), 23, Action.Serialize, Action.Deserialize);
         localPokemon.maxpv = localPokemonScriptable.maxpv;
         localPokemon.currentpv = localPokemonScriptable.maxpv;
         localPokemon.speed = localPokemonScriptable.speed;
-        localPokemon.listActions = localPokemonScriptable.listActions;
         localPokemon.name = localPokemonScriptable.name;
         localPokemon.type = localPokemonScriptable.type;
+        remotePokemon = new PokemonObject();
 
         turnManager = gameObject.AddComponent<PunTurnManager>();
         turnManager.TurnManagerListener = this;
@@ -98,16 +82,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         localPlayerPanel.gameObject.SetActive(false);
         remotePlayerPanel.gameObject.SetActive(false);
         interfacePanel.gameObject.SetActive(false);
+
     }
 
     public void Update()
     {
-        if (Input.GetKeyUp(KeyCode.L))
+        if (Input.GetKeyUp(KeyCode.P))
         {
             PhotonNetwork.LeaveRoom();
         }
 
-        if (Input.GetKeyUp(KeyCode.C))
+        if (Input.GetKeyUp(KeyCode.M))
         {
             PhotonNetwork.ConnectUsingSettings();
         }
@@ -238,34 +223,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     public void OnPlayerMove(Player player, int turn, object move)
     {
         Debug.Log("OnPlayerMove: " + player + " turn: " + turn + " action: " + move);
-        if (turn == 0)
-        {
-            if (player.IsLocal)
-            {
-                localPokemon = (PokemonObject) move;
-                Debug.Log("local " + localPokemon.name);
-            }
-            else
-            {
-                remotePokemon = (PokemonObject) move;
-                Debug.Log("remote " + remotePokemon.name);
-            }
-        }
+        
     }
 
     public void OnPlayerFinished(Player player, int turn, object move)
     {
         Debug.Log("OnTurnFinished: " + player + " turn: " + turn + " action: " + move);
-
         if (player.IsLocal)
         {
-            localSelection = (Action)move;
+            localSelection = (Action) move;
+            Debug.Log("local type " + localSelection.type);
         }
         else
         {
-            remoteSelection = (Action)move;
+            remoteSelection = (Action) move;
+            Debug.Log("remote type " + remoteSelection.type);
         }
     }
+
 
     public void OnTurnTimeEnds(int turn)
     {
@@ -346,11 +321,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void StartTurn()
     {
-        Debug.Log(localPokemon.name);
-        if (turnManager.Turn == 0)
-        {
-            this.turnManager.SendMove(localPokemon, false);
-        }
         if (PhotonNetwork.IsMasterClient)
         {
             turnManager.BeginTurn();
@@ -365,7 +335,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void OnClickButton(int buttonID)
     {
-        localSelection = localPokemon.listActions[buttonID];
+        localSelection = localPokemonScriptable.listActions[buttonID];
         MakeTurn(localSelection);
     }
 
