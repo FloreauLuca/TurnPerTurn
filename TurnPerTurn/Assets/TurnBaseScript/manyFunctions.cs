@@ -15,7 +15,7 @@ public class manyFunctions : MonoBehaviour
     public abilityScriptObj actualAbility;
     
 
-    void checkType()
+    public void checkType(PokeType abilitiy, PokeType opponent)
     {
         switch (actualAbility.type)
         {

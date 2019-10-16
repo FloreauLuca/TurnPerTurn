@@ -12,12 +12,12 @@ public class UIPanel : MonoBehaviour
     [SerializeField] private GameObject statutFreezeText;
     [SerializeField] private GameObject statutPoisonText;
 
-    public void SetValue(string name, float maxPV, float currentPV, string type, bool freezed, bool poisonned)
+    public void SetValue(string name, float maxPV, float currentPV, PokeType type, bool freezed, bool poisonned)
     {
         nameText.text = name;
         pv.maxValue = maxPV;
         pv.value = currentPV;
-        typeText.text = type;
+        typeText.text = type.ToString();
         statutFreezeText.SetActive(freezed);
         statutPoisonText.SetActive(poisonned);
     }

@@ -8,6 +8,8 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+public enum PokeType { FIRE, WATER, PLANT, WIND, GROUND, ELEKTRIK };
+
 [Serializable]
 public class PokemonObject
 {
@@ -17,7 +19,7 @@ public class PokemonObject
     public float maxpv;
     public float speed;
     public string name;
-    public string type;
+    public PokeType pokeType;
     public bool freezed;
     public bool poisonned;
 
@@ -62,6 +64,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     private int damage;
 
+    [SerializeField] private GameObject startPanel;
+
+    [SerializeField] private TextMeshProUGUI[] button;
+
     public void Start()
     {
         int random = Random.Range(0, pokemonScriptable.Length);
@@ -72,9 +78,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         localPokemon.currentpv = localPokemonScriptable.maxpv;
         localPokemon.speed = localPokemonScriptable.speed;
         localPokemon.name = localPokemonScriptable.name;
-        localPokemon.type = localPokemonScriptable.type;
+        localPokemon.pokeType = localPokemonScriptable.pokeType;
         localPokemon.id = random;
         remotePokemon = new PokemonObject();
+
+        for (int i = 0; i < 3; i++)
+        {
+            button[i].text = localPokemonScriptable.listActions[i].type.ToString();
+        }
 
         turnManager = gameObject.AddComponent<PunTurnManager>();
         turnManager.TurnManagerListener = this;
@@ -88,6 +99,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void Update()
     {
+        
         /*
         if (Input.GetKeyUp(KeyCode.P))
         {
@@ -139,7 +151,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         if (selected != null)
         {
             localPlayerAction.gameObject.SetActive(true);
-            localPlayerAction.text = selected.ToString();
+            localPlayerAction.text = localPokemon.name + " lance " + selected.type.ToString();
         }
 
         if (turnManager.IsCompletedByAll)
@@ -147,7 +159,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
             selected = GetAction(remoteSelection);
             if (selected != null)
             {
-                remotePlayerAction.text = selected.ToString();
+                remotePlayerAction.text = remotePokemon.name + " lance " + selected.type.ToString();
             }
         }
         else
@@ -170,6 +182,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
                     remotePlayerPanel.SetActive(false);
                 }
             }
+        }
+        if (turnManager.Turn == 1)
+        {
+            interfacePanel.SetActive(false);
+            startPanel.SetActive(true);
+        }
+        else if (turnManager.Turn > 1)
+        {
+            interfacePanel.SetActive(true);
+            startPanel.SetActive(false);
         }
     }
 
@@ -263,8 +285,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         {
             remotePokemon = remoteSelection.switchedPokemon;
         }*/
-        remotePokemon.currentpv = remoteSelection.currentPV;
-        localPokemon.currentpv = localSelection.currentPV;
+        UpdatePokemon(localSelection, localPokemon);
+        UpdatePokemon(remoteSelection, remotePokemon);
         if (remotePokemon.speed > localPokemon.speed)
         {
             UpdateAction(remoteSelection, remotePokemon, localPokemon);
@@ -290,14 +312,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     private void UpdateAction(Action selection, PokemonObject myPokemon, PokemonObject otherPokemon)
     {
-        myPokemon.maxpv = pokemonScriptable[selection.currentPokemonID].maxpv;
-        myPokemon.speed = pokemonScriptable[selection.currentPokemonID].speed;
-        myPokemon.name = pokemonScriptable[selection.currentPokemonID].name;
-        myPokemon.type = pokemonScriptable[selection.currentPokemonID].type;
+        float typeModifier = checkType(myPokemon.pokeType, otherPokemon.pokeType);
         switch (selection.type)
         {
             case Action.Type.ATTAQUE:
-                otherPokemon.currentpv -= selection.value;
+                otherPokemon.currentpv -= selection.value*typeModifier;
                 break;
             case Action.Type.SOIN:
                 myPokemon.currentpv += selection.value;
@@ -313,10 +332,124 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         }
     }
 
+
+    public float checkType(PokeType abilitiy, PokeType opponent)
+    {
+        float typeModifier = 1.0f;
+        switch (abilitiy)
+        {
+            case PokeType.FIRE:
+                if (opponent == PokeType.PLANT)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.WATER)
+                {
+                    typeModifier = 0.5f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            case PokeType.WATER:
+                if (opponent == PokeType.FIRE || opponent == PokeType.GROUND)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.ELEKTRIK || opponent == PokeType.PLANT)
+                {
+                    typeModifier = 0.5f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            case PokeType.PLANT:
+                if (opponent == PokeType.WATER || opponent == PokeType.GROUND)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.FIRE || opponent == PokeType.WIND)
+                {
+                    typeModifier = 0.5f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            case PokeType.ELEKTRIK:
+                if (opponent == PokeType.WATER || opponent == PokeType.WIND)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.PLANT)
+                {
+                    typeModifier = 0.5f;
+                }
+                else if (opponent == PokeType.GROUND)
+                {
+                    typeModifier = 0.0f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            case PokeType.GROUND:
+                if (opponent == PokeType.FIRE || opponent == PokeType.ELEKTRIK)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.WATER)
+                {
+                    typeModifier = 0.5f;
+                }
+                else if (opponent == PokeType.WIND)
+                {
+                    typeModifier = 0.0f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            case PokeType.WIND:
+                if (opponent == PokeType.PLANT)
+                {
+                    typeModifier = 2.0f;
+                }
+                else if (opponent == PokeType.ELEKTRIK)
+                {
+                    typeModifier = 0.5f;
+                }
+                else
+                {
+                    typeModifier = 1.0f;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return typeModifier;
+    }
+
+    private void UpdatePokemon(Action selection, PokemonObject pokemon)
+    {
+        pokemon.maxpv = pokemonScriptable[selection.currentPokemonID].maxpv;
+        pokemon.speed = pokemonScriptable[selection.currentPokemonID].speed;
+        pokemon.name = pokemonScriptable[selection.currentPokemonID].name;
+        pokemon.pokeType = pokemonScriptable[selection.currentPokemonID].pokeType;
+        pokemon.currentpv = selection.currentPV;
+    }
+
     private void UpdateScores()
     {
-        localPlayerUI.SetValue(localPokemon.name, localPokemon.maxpv, localPokemon.currentpv, localPokemon.type, localPokemon.freezed, localPokemon.poisonned);
-        remotePlayerUI.SetValue(remotePokemon.name, remotePokemon.maxpv, remotePokemon.currentpv, remotePokemon.type, remotePokemon.freezed, remotePokemon.poisonned);
+        localPlayerUI.SetValue(localPokemon.name, localPokemon.maxpv, localPokemon.currentpv, localPokemon.pokeType, localPokemon.freezed, localPokemon.poisonned);
+        remotePlayerUI.SetValue(remotePokemon.name, remotePokemon.maxpv, remotePokemon.currentpv, remotePokemon.pokeType, remotePokemon.freezed, remotePokemon.poisonned);
     }
 
     public void OnEndTurn()
@@ -353,8 +486,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void OnClickButton(int buttonID)
     {
-        localSelection = localPokemonScriptable.listActions[buttonID];
+        if (buttonID < 3)
+        {
+            localSelection = localPokemonScriptable.listActions[buttonID];
+        }
+
         localSelection.currentPV = localPokemon.currentpv;
+        localSelection.currentPokemonID = localPokemon.id;
         MakeTurn(localSelection);
     }
 

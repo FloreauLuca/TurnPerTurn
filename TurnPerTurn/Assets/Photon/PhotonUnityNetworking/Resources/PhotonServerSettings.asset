@@ -13,26 +13,15 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-<<<<<<< HEAD
-    AppIdRealtime: b6027619-d752-4d12-b9bf-5d71cc54a6d0
-    AppIdChat: 0f08bf7e-ec23-431e-b758-f36a589ab78d
-    AppIdVoice: 
-    AppVersion: 
-=======
     AppIdRealtime: 98e682b5-bb3d-4b19-b1b0-7fe0a3ec661b
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 1.0
->>>>>>> Lucadevelop
+    AppVersion: 
     UseNameServer: 1
     FixedRegion: 
     Server: 
     Port: 0
-<<<<<<< HEAD
-    Protocol: 0
-=======
     Protocol: 1
->>>>>>> Lucadevelop
     EnableLobbyStatistics: 0
     NetworkLogging: 1
   PunLogging: 0

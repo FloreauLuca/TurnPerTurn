@@ -14,60 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   listActions:
   - type: 0
+    pokeType: 0
     value: 25
-    currentPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
-    switchedPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
+    currentPokemonID: 0
+    currentPV: 0
   - type: 3
+    pokeType: 0
     value: 0
-    currentPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
-    switchedPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
+    currentPokemonID: 0
+    currentPV: 0
   - type: 1
+    pokeType: 0
     value: 10
-    currentPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
-    switchedPokemon:
-      currentpv: 0
-      maxpv: 0
-      speed: 0
-      name: 
-      type: 
-      freezed: 0
-      poisonned: 0
+    currentPokemonID: 0
+    currentPV: 0
   maxpv: 100
   speed: 50
   name: Pika
-  type: Elec
+  pokeType: 5
