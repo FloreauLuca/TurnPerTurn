@@ -84,7 +84,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("OnPhotonRandomJoinFailed" + message);
+        Debug.Log("OnPhotonRandomJoinFailed " + message);
         PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 2, PlayerTtl = 20000 }, null);
     }
 

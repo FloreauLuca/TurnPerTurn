@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Object = System.Object;
 
 [Serializable]
 public class PokemonObject
@@ -166,10 +160,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
                 {
                     remotePlayerPanel.SetActive(false);
                 }
-
             }
-
-
         }
     }
 
@@ -184,6 +175,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         Player remote = PhotonNetwork.LocalPlayer.GetNext();
         Player local = PhotonNetwork.LocalPlayer;
 
+        localPlayerName.text = local.NickName;
         if (remote != null)
         {
             remotePlayerName.text = remote.NickName;
@@ -228,16 +220,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void OnPlayerFinished(Player player, int turn, object move)
     {
-        Debug.Log("OnTurnFinished: " + player + " turn: " + turn + " action: " + move);
-        if (player.IsLocal)
+        Debug.Log("OnTurnFinished: " + player + " " + PhotonNetwork.LocalPlayer + " " + PhotonNetwork.LocalPlayer.GetNext() + " turn: " + turn + " action: " + move);
+        if (player == PhotonNetwork.LocalPlayer)
         {
             localSelection = (Action) move;
-            Debug.Log("local type " + localSelection.type);
+            Debug.Log("local type " + localSelection.value);
         }
         else
         {
             remoteSelection = (Action) move;
-            Debug.Log("remote type " + remoteSelection.type);
+            Debug.Log("remote type " + remoteSelection.value);
         }
     }
 
@@ -336,6 +328,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     public void OnClickButton(int buttonID)
     {
         localSelection = localPokemonScriptable.listActions[buttonID];
+        localSelection.currentPV = localPokemon.currentpv;
         MakeTurn(localSelection);
     }
 

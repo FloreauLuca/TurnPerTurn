@@ -21,18 +21,18 @@ public class Action
 
     public Type type = Type.NONE;
     public float value = 0;
-    public int currentPokemonID;
-    public int currentPV;
+    public float currentPokemonID;
+    public float currentPV;
     public byte Id { get; set; }
 
     public static object Deserialize(byte[] data)
     {
         var result = new Action();
         result.Id = data[0];
-        result.type = (Action.Type)data[2];
-        result.value = data[7];
-        result.currentPokemonID = data[13];
-        result.currentPV = data[18];
+        result.type = (Action.Type)data[1];
+        result.value = data[2];
+        result.currentPokemonID = data[3];
+        result.currentPV = data[4];
         return result;
     }
 

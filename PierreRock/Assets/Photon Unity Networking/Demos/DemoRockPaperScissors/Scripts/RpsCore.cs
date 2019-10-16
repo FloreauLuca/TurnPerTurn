@@ -278,10 +278,13 @@ public class RpsCore : PunBehaviour, IPunTurnManagerCallbacks
         if (photonPlayer.IsLocal)
         {
             this.localSelection = (Hand)move;
+            Debug.Log("local " + localSelection);
         }
         else
         {
             this.remoteSelection = (Hand)move;
+            Debug.Log("remote " + remoteSelection);
+
         }
     }
 
