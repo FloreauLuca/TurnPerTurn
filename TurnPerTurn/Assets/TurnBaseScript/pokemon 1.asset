@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf4c03097d19ecc4b864d109c8212178, type: 3}
+  m_Name: pokemon 1
+  m_EditorClassIdentifier: 
+  hp: 0
+  speed: 0
+  atk: 0
+  def: 0
+  pkmnName: elektrapez
+  abilityList:
+  - {fileID: 11400000, guid: b4a544414395c7a4689eaa4623a7d14a, type: 2}
+  - {fileID: 11400000, guid: 8cc627990eb98644e9d24cd20e8662a1, type: 2}
+  - {fileID: 11400000, guid: f79f3d2667fc834479f4c30e1709e1a1, type: 2}
+  pkmnSwitchAbility: 0
+  pkmnType: 0
