@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04664243365e3584ea46c0af48a030e4, type: 3}
   m_Name: bulleEau
   m_EditorClassIdentifier: 
-  abilityName: bulleEau
+  abilityName: waterGun
   type: 1
   status: 1

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf4c03097d19ecc4b864d109c8212178, type: 3}
-  m_Name: goupix
+  m_Name: Pokemon 3
   m_EditorClassIdentifier: 
-  hp: 20
-  speed: 10
-  atk: 15
-  def: 5
-  pkmnName: Goupix
+  hp: 0
+  speed: 0
+  atk: 0
+  def: 0
+  pkmnName: rootiger
   abilityList:
-  - {fileID: 11400000, guid: b4a544414395c7a4689eaa4623a7d14a, type: 2}
-  - {fileID: 11400000, guid: b4a544414395c7a4689eaa4623a7d14a, type: 2}
-  - {fileID: 11400000, guid: b4a544414395c7a4689eaa4623a7d14a, type: 2}
+  - {fileID: 11400000, guid: 0156cb8268559864ab3255f1ab1dcd6b, type: 2}
+  - {fileID: 11400000, guid: 62643d5c69acd7c488f46309b2aceb09, type: 2}
+  - {fileID: 11400000, guid: d2e668f6e1a68534e9afc7cc53289eee, type: 2}
   pkmnSwitchAbility: 0
-  pkmnType: 0
+  pkmnType: 2
