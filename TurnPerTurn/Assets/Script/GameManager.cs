@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private TextMeshProUGUI timeText;
 
+    [SerializeField] private TextMeshProUGUI winLoosePanel;
+
     private Action localSelection;
     private Action remoteSelection;
 
@@ -86,6 +88,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void Update()
     {
+        /*
         if (Input.GetKeyUp(KeyCode.P))
         {
             PhotonNetwork.LeaveRoom();
@@ -95,6 +98,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         {
             PhotonNetwork.ConnectUsingSettings();
         }
+        */
 
         if (!PhotonNetwork.InRoom)
         {
@@ -271,6 +275,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
             UpdateAction(localSelection, localPokemon, remotePokemon);
             UpdateAction(remoteSelection, remotePokemon, localPokemon);
         }
+        if (localPokemon.currentpv < 0)
+        {
+            winLoosePanel.text = "Loose";
+            PhotonNetwork.LeaveRoom();
+        } else
+        if (remotePokemon.currentpv < 0)
+        {
+            winLoosePanel.text = "Win";
+            PhotonNetwork.LeaveRoom();
+        }
+        
     }
 
     private void UpdateAction(Action selection, PokemonObject myPokemon, PokemonObject otherPokemon)
