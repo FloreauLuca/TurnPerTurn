@@ -6,11 +6,13 @@ using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public class PokemonObject
 {
     //public Action[] listActions = new Action[3];
+    public int id;
     public float currentpv;
     public float maxpv;
     public float speed;
@@ -38,7 +40,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     [SerializeField] private GameObject interfacePanel;
 
-    [SerializeField] private Pokemon localPokemonScriptable;
+    private Pokemon localPokemonScriptable;
     [SerializeField] private Pokemon[] pokemonScriptable;
 
     private PokemonObject localPokemon;
@@ -60,6 +62,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void Start()
     {
+        int random = Random.Range(0, pokemonScriptable.Length);
+        localPokemonScriptable = pokemonScriptable[random]; 
         localPokemon = new PokemonObject();
         PhotonPeer.RegisterType(typeof(Action), 23, Action.Serialize, Action.Deserialize);
         localPokemon.maxpv = localPokemonScriptable.maxpv;
@@ -67,6 +71,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         localPokemon.speed = localPokemonScriptable.speed;
         localPokemon.name = localPokemonScriptable.name;
         localPokemon.type = localPokemonScriptable.type;
+        localPokemon.id = random;
         remotePokemon = new PokemonObject();
 
         turnManager = gameObject.AddComponent<PunTurnManager>();
@@ -224,12 +229,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         if (player == PhotonNetwork.LocalPlayer)
         {
             localSelection = (Action) move;
-            Debug.Log("local type " + localSelection.value);
+            Debug.Log("local type " + localSelection.currentPV);
         }
         else
         {
             remoteSelection = (Action) move;
-            Debug.Log("remote type " + remoteSelection.value);
+            Debug.Log("remote type " + remoteSelection.currentPV);
         }
     }
 
@@ -254,7 +259,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
         {
             remotePokemon = remoteSelection.switchedPokemon;
         }*/
-
+        remotePokemon.currentpv = remoteSelection.currentPV;
+        localPokemon.currentpv = localSelection.currentPV;
         if (remotePokemon.speed > localPokemon.speed)
         {
             UpdateAction(remoteSelection, remotePokemon, localPokemon);
@@ -269,6 +275,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     private void UpdateAction(Action selection, PokemonObject myPokemon, PokemonObject otherPokemon)
     {
+        myPokemon.maxpv = pokemonScriptable[selection.currentPokemonID].maxpv;
+        myPokemon.speed = pokemonScriptable[selection.currentPokemonID].speed;
+        myPokemon.name = pokemonScriptable[selection.currentPokemonID].name;
+        myPokemon.type = pokemonScriptable[selection.currentPokemonID].type;
         switch (selection.type)
         {
             case Action.Type.ATTAQUE:
@@ -321,6 +331,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunTurnManagerCallbacks
 
     public void MakeTurn(Action selection)
     {
+        Debug.Log( PhotonNetwork.LocalPlayer + " " + selection.currentPV);
         this.turnManager.SendMove(selection, true);
     }
 

@@ -6,8 +6,6 @@ using UnityEngine;
 [Serializable]
 public class Action
 {
-
-
     public enum Type
     {
         ATTAQUE,
@@ -21,7 +19,7 @@ public class Action
 
     public Type type = Type.NONE;
     public float value = 0;
-    public float currentPokemonID;
+    public int currentPokemonID;
     public float currentPV;
     public byte Id { get; set; }
 
@@ -39,7 +37,7 @@ public class Action
     public static byte[] Serialize(object customType)
     {
         var c = (Action)customType;
-        return new byte[] { c.Id, (byte)c.type, (byte)c.value, (byte)c.currentPokemonID, (byte)c.currentPokemonID};
+        return new byte[] { c.Id, (byte)c.type, (byte)c.value, (byte)c.currentPokemonID, (byte)c.currentPV};
     }
 }
 

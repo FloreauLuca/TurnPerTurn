@@ -5827,10 +5827,9 @@ MonoBehaviour:
   remotePlayerAction: {fileID: 842321755}
   remotePlayerUI: {fileID: 1869158460}
   interfacePanel: {fileID: 1307642742}
-  localPokemonScriptable: {fileID: 11400000, guid: bbb521d9f872b8941b542cdea3285381,
-    type: 2}
-  remotePokemonScriptable: {fileID: 11400000, guid: 7ff931ea4915c794cb19210a60a2476d,
-    type: 2}
+  pokemonScriptable:
+  - {fileID: 11400000, guid: bbb521d9f872b8941b542cdea3285381, type: 2}
+  - {fileID: 11400000, guid: 7ff931ea4915c794cb19210a60a2476d, type: 2}
   disconnectedPanel: {fileID: 595873749}
   turnText: {fileID: 1553902835}
   timeText: {fileID: 1648237782}

@@ -19,6 +19,6 @@ public class UIPanel : MonoBehaviour
         pv.value = currentPV;
         typeText.text = type;
         statutFreezeText.SetActive(freezed);
-        statutFreezeText.SetActive(poisonned);
+        statutPoisonText.SetActive(poisonned);
     }
 }
